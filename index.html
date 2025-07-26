@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Para o Amor da Minha Vida 💖</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #ffe6f0, #fff0f5);
+      color: #333;
+      text-align: center;
+      padding: 20px 30px 60px;
+      margin: 0;
+    }
+
+    /* Botão player topo direito */
+    #musicBtn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 25px;
+      border: none;
+      background: linear-gradient(45deg, #ff4081, #f50057);
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(245, 0, 87, 0.5);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 10000;
+      user-select: none;
+    }
+    #musicBtn:hover {
+      background: linear-gradient(45deg, #f50057, #ff4081);
+      box-shadow: 0 8px 20px rgba(245, 0, 87, 0.8);
+    }
+    #musicBtn svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #e91e63;
+      margin-top: 50px;
+      margin-bottom: 15px;
+    }
+
+    .about {
+      max-width: 700px;
+      margin: 0 auto 40px auto;
+      font-size: 1.2em;
+      background: white;
+      padding: 20px 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      line-height: 1.5;
+    }
+
+    .timer {
+      margin-top: 20px;
+      font-size: 1.8em;
+      color: #880e4f;
+    }
+
+    .slider {
+      position: relative;
+      width: 320px;
+      height: 420px;
+      margin: 40px auto 20px;
+      border-radius: 15px;
+      overflow: hidden;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .slider img {
+      max-width: 100%;
+      max-height: 100%;
+      position: absolute;
+      object-fit: contain;
+      background: white;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .slider img.active {
+      opacity: 1;
+      position: absolute;
+    }
+
+    .below-slider-text {
+      max-width: 600px;
+      margin: 30px auto 20px;
+      font-size: 1.15em;
+      color: #555;
+      line-height: 1.6;
+      background: white;
+      padding: 20px 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+
+    .gallery {
+      max-width: 700px;
+      margin: 0 auto 30px;
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .gallery img {
+      width: calc(25% - 11.25px);
+      height: 180px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
+
+    /* Botão de mensagem */
+    #msgBtn {
+      padding: 12px 24px;
+      font-size: 18px;
+      background-color: #f06292;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin: 0 auto 15px auto;
+      display: block;
+      max-width: 200px;
+      z-index: 10;
+      position: relative;
+    }
+    #msgBtn:hover {
+      background-color: #e91e63;
+    }
+
+    /* Modal - pop-up */
+    #modalOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(3px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #modalContent {
+      background: #ffe6f0;
+      padding: 25px 30px;
+      border-radius: 20px;
+      max-width: 400px;
+      color: #880e4f;
+      font-size: 1.3em;
+      box-shadow: 0 0 20px rgba(233,30,99,0.6);
+      position: relative;
+      text-align: center;
+      user-select: none;
+    }
+
+    #modalClose {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #880e4f;
+      cursor: pointer;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="musicBtn" onclick="toggleMusic()" aria-label="Controlar música">
+    <svg id="iconPlay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+      <path d="M8 5v14l11-7z"/>
+    </svg>
+    <span id="musicBtnText">Tocar Música</span>
+  </button>
+
+  <audio id="bgMusic" loop>
+    <source src="musica/glimpse.mp3" type="audio/mpeg" />
+    Seu navegador não suporta áudio HTML5.
+  </audio>
+
+  <h1>Para o Amor da Minha Vida 💖</h1>
+
+  <div class="about">
+    Amor, este site é só uma pequena forma de mostrar o quanto você é importante para mim, e mais uma forma de eternizar o nosso relacionamento.
+    Cada momento ao seu lado é mágico. Você é linda, carinhosa e me faz sorrir mesmo nos dias mais difíceis.
+    Sou grato por ter você comigo. Espero que você goste dessa surpresa que preparei para você, Te amo demais faelinha! 💖
+  </div>
+
+  <div class="timer">
+    Estamos juntos há: <span id="loveTimer"></span>
+  </div>
+
+  <div class="slider">
+    <img src="/imagens/imagem9.jpg" class="active" alt="Foto 1" />
+    <img src="imagens/imagem8.jpg" alt="Foto 2" />
+    <img src="imagens/imagem7.jpg" alt="Foto 3" />
+    <img src="imagens/imagem4.jpg" alt="Foto 4" />
+    <img src="imagens/imagem5.jpg" alt="Foto 2" />
+    <img src="imagens/imagem4.jpg" alt="Foto 3" />
+    <img src="imagens/imagem3.jpg" alt="Foto 4" />
+     <img src="/imagens/imagem2.jpg" alt="Foto 3" />
+    <img src="/imagens/imagem10.jpg" alt="Foto 4" />
+    <img src="imagens/imagem11.jpg" alt="Foto 2" />
+    <img src="imagens/imagem12.jpg" alt="Foto 3" />
+    
+
+  </div>
+
+  <div class="below-slider-text">
+    Desde que você entrou na minha vida, tudo ganhou mais cor, mais sentido, mais calma. Estar com você é a melhor parte dos meus dias. Eu nunca fui muito de escrever, e você sabe bem disso, mas hoje eu quero te mostrar o quanto você é importante pra mim. Por isso, estou colocando essas palavras nesse site – um pedacinho do meu amor por você que quero eternizar.
+
+Rafaela, eu amo estar ao seu lado. A gente nem precisa sair, só de te ter comigo, de passar um tempo com você, já me sinto completo. Gosto das nossas tardes simples, das coisas que assistimos juntos, de ficar deitado com você, ouvindo tua risada, sentindo teu abraço. Às vezes, o silêncio entre nós fala mais do que mil palavras. E é nesse silêncio que eu percebo: não preciso de mais nada além de você.
+
+Tem algo mágico em simplesmente existir ao teu lado. Você me traz paz, alegria e um amor que eu nunca imaginei sentir. Eu dou o meu máximo todos os dias pra te ver sorrir, pra que você se sinta amada, segura e feliz. Às vezes tropeço, às vezes erro, mas nunca, em momento algum, deixo de tentar com todas as minhas forças.
+
+Você merece o mundo, e eu quero ser aquele que luta todos os dias pra te dar, nem que seja, um pedacinho dele.
+
+Faelinha, obrigado por ser minha parceira, minha amiga. Obrigado por cada momento ao teu lado, por cada conversa, por cada abraço apertado momento que passamos juntos, por menor que seja. Tudo isso significa mais pra mim do que eu conseguiria colocar em palavras.
+
+Eu te amo com todas as forças do meu coração. E esse site é só mais uma forma de te mostrar isso – um pedacinho da minha alma gravado aqui pra sempre, pra dizer: o meu amor por você é eterno.
+
+
+  </div>
+
+  <div class="gallery">
+    <img src="imagens/imagem1.jpg" alt="Galeria 1" />
+    <img src="imagens/imagem13.jpg" alt="Galeria 2" />
+    <img src="imagens/imagem14.jpg" alt="Galeria 3" />
+    <img src="imagens/imagem001.jpg" alt="Galeria 4" />
+  </div>
+
+  <button id="msgBtn" onclick="showNextMessage()">💌 Razões para te amar</button>
+
+  <!-- Modal pop-up -->
+  <div id="modalOverlay" onclick="closeModal(event)">
+    <div id="modalContent">
+      <span id="modalClose" onclick="closeModal(event)">&times;</span>
+      <div id="modalMessage"></div>
+    </div>
+  </div>
+
+<script>
+  // Contador de tempo de namoro
+  const startDate = new Date("2025-03-06T00:00:00"); // Troque a data aqui
+
+  function updateLoveTimer() {
+    const now = new Date();
+    const diff = now - startDate;
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("loveTimer").innerText =
+      `${days} dias, ${hours} horas, ${minutes} minutos e ${seconds} segundos 💘`;
+  }
+  setInterval(updateLoveTimer, 1000);
+  updateLoveTimer();
+
+  // Slideshow fotos grandes
+  const slides = document.querySelectorAll(".slider img");
+  let current = 0;
+
+  function showNextSlide() {
+    slides[current].classList.remove("active");
+    current = (current + 1) % slides.length;
+    slides[current].classList.add("active");
+  }
+  setInterval(showNextSlide, 4000);
+
+  // Música player com botão estilizado
+  const bgMusic = document.getElementById("bgMusic");
+  const musicBtn = document.getElementById("musicBtn");
+  const musicBtnText = document.getElementById("musicBtnText");
+  const iconPlay = document.getElementById("iconPlay");
+  let isPlaying = false;
+
+  // Ícones SVG alternativos (play / pause)
+  const playIconPath = "M8 5v14l11-7z";
+  const pauseIconPath = "M6 19h4V5H6v14zm8-14v14h4V5h-4z";
+
+  function toggleMusic() {
+    if (isPlaying) {
+      bgMusic.pause();
+      musicBtnText.textContent = "Tocar Música";
+      iconPlay.querySelector("path").setAttribute("d", playIconPath);
+      isPlaying = false;
+    } else {
+      bgMusic.play().catch(() => {
+        // Caso o navegador bloqueie, não quebra o site
+      });
+      musicBtnText.textContent = "Pausar Música";
+      iconPlay.querySelector("path").setAttribute("d", pauseIconPath);
+      isPlaying = true;
+    }
+  }
+</script>
+<script>
+  // Pop-up mensagens
+  const messages = [
+    "Porque seu sorriso ilumina até meus dias mais nublados. ☀️",
+    "Porque você me entende até no silêncio ✨",
+    "Porque tudo fica melhor quando estou ao seu lado 💖",
+    "Porque com você, até o tédio vira felicidade 💓",
+    "Porque eu amo assistir qualquer coisa, desde que seja com você 🎬",
+    "Porque nossos momentos simples são os mais especiais 🕤",
+    "Porque sua presença é tudo o que eu preciso 🫂",
+    "Porque te ver feliz é a minha maior felicidade 💓",
+    "Porque nossos planos pro futuro me dão esperança 🌠",
+    "Porque amo estressar você, e ver sua carinha de brava 😅",
+    "Porque as frases acabaram, mas meu amor por você nunca tem fim! 🥰 ",
+    
+  ];
+  let msgIndex = 0;
+
+  function showNextMessage() {
+    const modalOverlay = document.getElementById("modalOverlay");
+    const modalMessage = document.getElementById("modalMessage");
+    modalMessage.textContent = messages[msgIndex];
+    msgIndex = (msgIndex + 1) % messages.length;
+    modalOverlay.style.display = "flex";
+  }
+
+  function closeModal(event) {
+    if (
+      event.target.id === "modalOverlay" ||
+      event.target.id === "modalClose"
+    ) {
+      document.getElementById("modalOverlay").style.display = "none";
+    }
+  }
+</script>
+
+</body>
+</html>
